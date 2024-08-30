@@ -10,23 +10,33 @@ enum StepAngleSelection {
 	StepAngle5, // 15deg
 };
 
-NemaStepperControl::NemaStepperControl(int stepPin, int dirPin, int enablePin) {
+NemaStepperControl::NemaStepperControl(int stepPin, int dirPin, int enablePin, int microSteps) {
   _stepPin = stepPin;
   _dirPin = dirPin;
   _enablePin = enablePin;
-
+  _micro_steps = microSteps; 
+  
   pinMode(_stepPin, OUTPUT);
   pinMode(_dirPin, OUTPUT);
   pinMode(_enablePin, OUTPUT);
+  
+  _steps_per_revolutions = (_micro_steps * 203); 	// refine 203 as per required for fine tuning
+													// 203 for 42HHD4027-01
+													// 200 for Robokit-RKI-1127
+  _leads = 8; // a 4 starts leadscrew has 8 mm travel in one rotation
+  _steps_for_1mm = (_steps_per_revolutions / _leads);
 }
 
-void NemaStepperControl::rotate(int steps, bool direction) {
+void NemaStepperControl::rotate(int distance, bool direction) {
+  _required_travel = distance;
   digitalWrite(_dirPin, direction);
-  for (int i = 0; i < steps; i++) {
+  for (int k = 0; k < _required_travel; k++) {
+  for (int i = 0; i < _steps_for_1mm; i++) {
     digitalWrite(_stepPin, HIGH);
     delayMicroseconds(50);  // Adjust this delay to control speed
     digitalWrite(_stepPin, LOW);
     delayMicroseconds(50);  // Adjust this delay to control speed
+  }
   }
 }
 
