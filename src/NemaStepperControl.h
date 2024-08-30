@@ -2,15 +2,18 @@
 #define NemaStepperControl_h
 
 #include "Arduino.h"
+#include <Wire.h>
 
 class NemaStepperControl {
   public:
-    NemaStepperControl(int stepPin, int dirPin, int enablePin, int microSteps); 
+    NemaStepperControl(bool ControlType, int stepPin, int dirPin, int enablePin, int microSteps); 
     void rotate(int distance, bool direction);
 	void rotate(int stepAngle, int revolutions, bool direction);
     void enableDriver();
     void disableDriver();
   private:
+	bool _ControlType; 
+	bool _direction;
 	int _StepAngleSelected;
     int _stepPin;
     int _dirPin;

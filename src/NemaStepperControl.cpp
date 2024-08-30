@@ -1,6 +1,10 @@
 #include "Arduino.h"
 #include "NemaStepperControl.h"
 
+#include <pcf8574.h>
+
+PCF8574 ex0(0x20);
+
 enum StepAngleSelection {
 	StepAngle0, // 1.8deg
 	StepAngle1, // 0.18deg
@@ -10,16 +14,26 @@ enum StepAngleSelection {
 	StepAngle5, // 15deg
 };
 
-NemaStepperControl::NemaStepperControl(int stepPin, int dirPin, int enablePin, int microSteps) {
+enum InternalOrExternalControl {
+	InternalControl,
+	ExternalControl,
+};
+
+NemaStepperControl::NemaStepperControl(bool ControlType, int stepPin, int dirPin, int enablePin, int microSteps) {
+  _ControlType = ControlType;
   _stepPin = stepPin;
   _dirPin = dirPin;
   _enablePin = enablePin;
   _micro_steps = microSteps; 
   
   pinMode(_stepPin, OUTPUT);
-  pinMode(_dirPin, OUTPUT);
-  pinMode(_enablePin, OUTPUT);
-  
+  if (_ControlType == InternalControl) {
+	pinMode(_dirPin, OUTPUT);
+	pinMode(_enablePin, OUTPUT);
+  } else if (_ControlType == ExternalControl) {
+	pinMode(ex0, _dirPin, OUTPUT);
+	pinMode(ex0, _enablePin, OUTPUT);
+  }
   _steps_per_revolutions = (_micro_steps * 203); 	// refine 203 as per required for fine tuning
 													// 203 for 42HHD4027-01
 													// 200 for Robokit-RKI-1127
@@ -29,7 +43,12 @@ NemaStepperControl::NemaStepperControl(int stepPin, int dirPin, int enablePin, i
 
 void NemaStepperControl::rotate(int distance, bool direction) {
   _required_travel = distance;
-  digitalWrite(_dirPin, direction);
+  _direction = direction;
+  if (_ControlType == InternalControl) {
+	digitalWrite(_dirPin, _direction);
+  } else if (_ControlType == ExternalControl) {
+	digitalWrite(ex0, _dirPin, _direction);
+  }
   for (int k = 0; k < _required_travel; k++) {
   for (int i = 0; i < _steps_for_1mm; i++) {
     digitalWrite(_stepPin, HIGH);
@@ -76,9 +95,17 @@ void NemaStepperControl::rotate(int stepAngle, int revolutions, bool direction) 
 }
 
 void NemaStepperControl::enableDriver() {
-  digitalWrite(_enablePin, LOW);  // Assuming LOW enables the driver
+	if (_ControlType == InternalControl) {
+		digitalWrite(_enablePin, LOW);  // Assuming LOW enables the driver
+	} else if (_ControlType == ExternalControl) {
+		digitalWrite(ex0, _enablePin, LOW);  // Assuming LOW enables the driver
+	}
 }
 
 void NemaStepperControl::disableDriver() {
-  digitalWrite(_enablePin, HIGH);  // Assuming HIGH disables the driver
+	if (_ControlType == InternalControl) {
+		digitalWrite(_enablePin, HIGH);  // Assuming HIGH disables the driver
+	} else if (_ControlType == ExternalControl) {
+		digitalWrite(ex0, _enablePin, HIGH);  // Assuming HIGH disables the driver
+	}
 }
