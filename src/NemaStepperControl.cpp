@@ -32,14 +32,16 @@ enum ScrewTypeSelection {
 	BALLSCREW_8MM
 };
 
-NemaStepperControl::NemaStepperControl(int stepPin, bool DirControlType, int dirPin, bool EnControlType, int enablePin, int microSteps, bool ScrewType) {
+NemaStepperControl::NemaStepperControl(int stepPin, bool DirControlType, int dirPin, bool EnControlType, int enablePin, int microSteps, int ScrewPitch, int ScrewStart) {
 	_DirControlType = DirControlType;
 	_EnControlType = EnControlType;
 	_stepPin = stepPin;
 	_dirPin = dirPin;
 	_enablePin = enablePin;
 	_micro_steps = microSteps; 
-	_ScrewType = ScrewType;
+	_ScrewPitch = ScrewPitch;
+	_ScrewStart = ScrewStart;
+	_leads = (_ScrewPitch * _ScrewStart);
   
 	pinMode(_stepPin, OUTPUT);
 	if (_DirControlType == InternalControl) {
@@ -56,17 +58,6 @@ NemaStepperControl::NemaStepperControl(int stepPin, bool DirControlType, int dir
 	_steps_per_revolutions = (_micro_steps * 203); 	// refine 203 as per required for fine tuning
 													// 203 for 42HHD4027-01
 													// 200 for Robokit-RKI-1127
-	switch (_ScrewType) {
-		case LEADSCREW_2_START:
-			_leads = 4; // find the value, this is just a placeholder
-			break;
-		case LEADSCREW_4_START:
-			_leads = 8; // a 4 starts leadscrew has 8 mm travel in one rotation
-			break;
-		case BALLSCREW_8MM:
-			_leads = 6; // find the value, this is just a placeholder
-			break;
-	}
 	_steps_for_1mm = (_steps_per_revolutions / _leads);
 }
 

@@ -6,7 +6,8 @@ NemaStepperControl stepper1(4,  /* Step(Pulse) pin for the driver, has to be str
                             0,  /* To set the Enable Control Type as Internal or External, 0 -> Internal, 1 -> External */
                             19, /* Enable pin for the driver, can be either GPIO or PCF Px pin */
                             16, /* Microstepping */
-                            1   /* LeadScrew or Ball Screw, 0 -> LEADSCREW_2_START, 1 -> LEADSCREW_4_START, 2 -> BALLSCREW_8MM */
+                            2,  /* LeadScrew Pitch */
+                            4   /* Number of Starts on the Screw */
 );
 
 void setup() {
