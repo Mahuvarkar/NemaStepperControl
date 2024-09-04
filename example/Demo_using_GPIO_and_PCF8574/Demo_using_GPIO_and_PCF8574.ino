@@ -12,31 +12,33 @@ NemaStepperControl stepper1(2,  /* Step(Pulse) pin for the driver, has to be str
 void setup() {
   Serial.begin(115200);
   stepper1.enableDriver();
-  Serial.println("Driver ENABLED");
-  delay(1000);
+  Serial.println("Driver ENABLED 1");
   stepper1.rotate(50, HIGH);  // Rotate 50 mm in one direction
+  stepper1.disableDriver();
+  Serial.println("Driver DISABLED 1");
   delay(5000);
+  stepper1.enableDriver();
+  Serial.println("Driver ENABLED 2");
   stepper1.rotate(50, LOW);  // Rotate 50 mm in the other direction
   stepper1.disableDriver();
-  delay(1000);
-  Serial.println("Driver DISABLED");
+  Serial.println("Driver DISABLED 2");
   delay(5000);
 }
 
 void loop() {
   // Repeat rotation in the loop if needed
-  Serial.print("This Task runs on Core: ");
-  Serial.println(xPortGetCoreID());
-
-
+  // Serial.print("This Task runs on Core: ");
+  // Serial.println(xPortGetCoreID());
   stepper1.enableDriver();
-  Serial.println("Driver ENABLED");
-  delay(1000);
+  Serial.println("Driver ENABLED 3");
   stepper1.rotate(50, HIGH);  // Rotate 50 mm in one direction
+  stepper1.disableDriver();
+  Serial.println("Driver DISABLED 3");
   delay(5000);
+  stepper1.enableDriver();
+  Serial.println("Driver ENABLED 4");
   stepper1.rotate(50, LOW);  // Rotate 50 mm in the other direction
   stepper1.disableDriver();
-  delay(1000);
-  Serial.println("Driver DISABLED");
+  Serial.println("Driver DISABLED 4");
   delay(5000);
 }

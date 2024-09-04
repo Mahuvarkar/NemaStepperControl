@@ -24,6 +24,21 @@ void TaskToRunMotor1(void* parameter) {
     Serial.println(xPortGetCoreID());
 
     stepper1.enableDriver();
+    Serial.println("Driver ENABLED 3");
+    stepper1.rotate(50, HIGH);  // Rotate 50 mm in one direction
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
+    stepper1.disableDriver();
+    Serial.println("Driver DISABLED 3");
+    vTaskDelay(5000 / portTICK_PERIOD_MS);
+    stepper1.enableDriver();
+    Serial.println("Driver ENABLED 4");
+    stepper1.rotate(50, LOW);  // Rotate 50 mm in the other direction
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
+    stepper1.disableDriver();
+    Serial.println("Driver DISABLED 4");
+    vTaskDelay(5000 / portTICK_PERIOD_MS);
+
+    /*stepper1.enableDriver();
     Serial.println("Driver ENABLED");
     vTaskDelay(1000 / portTICK_PERIOD_MS);
     stepper1.rotate(distanceToTravel, HIGH);  // Rotate 50 mm in one direction
@@ -32,7 +47,7 @@ void TaskToRunMotor1(void* parameter) {
     stepper1.disableDriver();
     vTaskDelay(1000 / portTICK_PERIOD_MS);
     Serial.println("Driver DISABLED");
-    vTaskDelay(5000 / portTICK_PERIOD_MS);
+    vTaskDelay(5000 / portTICK_PERIOD_MS);*/
   }
 }
 
@@ -48,7 +63,6 @@ void setup() {
     &RunMotor1,      /* Task Handle */
     0                /* Core where to run the task */
   );
-
 }
 
 void loop() {

@@ -75,9 +75,9 @@ void NemaStepperControl::rotate(int distance, bool direction) {
 	_direction = direction;
 
 	if (_DirControlType == InternalControl) {
-		pinMode(_dirPin, OUTPUT);
+		digitalWrite(_dirPin, _direction);
 	} else if (_DirControlType == ExternalControl) {
-		pinMode(ex0, _dirPin, OUTPUT);
+		digitalWrite(ex0, _dirPin, _direction);
 	}
 	for (int k = 0; k < _required_travel; k++) {
 		for (int i = 0; i < _steps_for_1mm; i++) {

@@ -1,6 +1,6 @@
 /* 
 THIS CODE NEEDS TO BE TESTED ON HARDWARE
-TO BE TESTED AFTER "Demo_using_GPIO_and_PCF8574_as_Task.ino" 
+TO BE TESTED AFTER "Demo_using_GPIO_and_PCF8574_as_Task_with_LimitSwitch.ino" 
 */
 
 #include <NemaStepperControl.h>
@@ -9,6 +9,7 @@ TO BE TESTED AFTER "Demo_using_GPIO_and_PCF8574_as_Task.ino"
 PCF8574 pcf(0x20);
 
 #define LimitSwitch1 0
+#define LimitSwitch2 1
 
 TaskHandle_t RunMotor1, CheckLimitSw1;
 
@@ -28,27 +29,8 @@ void setup() {
 
   // pinMode(LimitSwitch1, INPUT_PULLUP);
   pinMode(pcf, LimitSwitch1, INPUT_PULLUP);
-
-    xTaskCreatePinnedToCore(
-    TaskToRunMotor1, /* Function To Implement the Task */
-    "Motor1Task",    /* Name of the Task */
-    1000,            /* Stack size in bytes */
-    NULL,            /* Task input Parameter */
-    1,               /* Priority of the task */
-    &RunMotor1,      /* Task Handle */
-    0                /* Core where to run the task */
-  );
-  // vTaskSuspend(RunMotor1);
-
-  xTaskCreatePinnedToCore(
-    TaskToCheckLimitSw1, /* Function To Implement the Task */
-    "CheckLimitSw1Task", /* Name of the Task */
-    1000,                /* Stack size in bytes */
-    NULL,                /* Task input Parameter */
-    1,                   /* Priority of the task */
-    &CheckLimitSw1,      /* Task Handle */
-    1                    /* Core where to run the task */
-  );
+  pinMode(pcf, LimitSwitch2, INPUT_PULLUP);
+  TaskDefinitions();
 }
 
 void loop() {
