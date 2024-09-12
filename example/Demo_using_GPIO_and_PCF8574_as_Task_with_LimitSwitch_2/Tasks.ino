@@ -6,7 +6,7 @@ void TaskDefinitions () {
     NULL,            /* Task input Parameter */
     1,               /* Priority of the task */
     &RunMotor1,      /* Task Handle */
-    0                /* Core where to run the task */
+    1                /* Core where to run the task */
   );
   // vTaskSuspend(RunMotor1);
 
@@ -31,9 +31,9 @@ void TaskToRunMotor1(void* parameter) {
     stepper1.enableDriver();
     Serial.println("Driver ENABLED");
     // vTaskDelay(1000 / portTICK_PERIOD_MS);
-    stepper1.rotate(distanceToTravel, CCW);  // Rotate 50 mm in one direction
+    stepper1.rotate(distanceToTravel, CCW, StepDelay);  // Rotate 50 mm in one direction
     vTaskDelay(5000 / portTICK_PERIOD_MS);
-    // stepper1.rotate(distanceToTravel, CW);  // Rotate 50 mm in the other direction
+    stepper1.rotate(distanceToTravel, CW, StepDelay);  // Rotate 50 mm in the other direction
     stepper1.disableDriver();
     vTaskDelay(10000 / portTICK_PERIOD_MS);
     Serial.println("Driver DISABLED");
@@ -56,6 +56,6 @@ void TaskToCheckLimitSw1(void* parameter) {
       vTaskResume(RunMotor1);
       Serial.println("RESUMED RunMotor Task");
     }
-    vTaskDelay(100 / portTICK_PERIOD_MS);
+    vTaskDelay(50 / portTICK_PERIOD_MS);
   }
 }

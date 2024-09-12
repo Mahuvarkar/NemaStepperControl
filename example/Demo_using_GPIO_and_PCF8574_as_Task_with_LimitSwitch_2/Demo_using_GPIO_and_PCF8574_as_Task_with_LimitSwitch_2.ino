@@ -1,8 +1,3 @@
-/* 
-THIS CODE NEEDS TO BE TESTED ON HARDWARE
-TO BE TESTED AFTER "Demo_using_GPIO_and_PCF8574_as_Task_with_LimitSwitch.ino" 
-*/
-
 #include "main.h"
 
 void setup() {

@@ -7,8 +7,8 @@
 class NemaStepperControl {
   public:
     NemaStepperControl(int stepPin, bool DirControlType, int dirPin, bool EnControlType, int enablePin, int microSteps, int ScrewPitch, int ScrewStart); 
-    void rotate(int distance, bool direction);
-	void rotate(int stepAngle, int revolutions, bool direction);
+    void rotate(int distance, bool direction, int MicroSecDelay);
+	//void rotate(int stepAngle, int revolutions, bool direction);
     void enableDriver();
     void disableDriver();
   private:
@@ -27,6 +27,7 @@ class NemaStepperControl {
 	int _ScrewStart;    // number of starts on the screw, it can be 1 or 2 or 4 or so on....
 	int _leads;			// (in mm) Distance travelled on the lead screw in one rotation.
 	int _required_travel;
+	int _MicroSecDelay; // delay in microseconds for motor driver pulse
 	double _steps_per_revolutions;// Steps per Revolution for the motor 
 	double _steps_for_1mm;
 };

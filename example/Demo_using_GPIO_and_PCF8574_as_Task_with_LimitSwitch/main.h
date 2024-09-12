@@ -12,6 +12,7 @@ PCF8574 pcf(0x20);
 TaskHandle_t RunMotor1, CheckLimitSw1;
 
 int distanceToTravel = 50;  // needs to volatile if it is updated by multiple tasks as per freeRTOS
+int StepDelay = 50;
 bool CCW = HIGH, CW = LOW;
 
 NemaStepperControl stepper1(2,  /* Step(Pulse) pin for the driver, has to be strictly on the GPOI of uC */

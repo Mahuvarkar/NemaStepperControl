@@ -1,5 +1,8 @@
 #include <NemaStepperControl.h>
 
+int distance_travel = 50; // in mm
+int StepDelay = 50;
+
 NemaStepperControl stepper1(4,  /* Step(Pulse) pin for the driver, has to be strictly on the GPOI of uC */
                             0,  /* To set the Direction Control Type as Internal or External, 0 -> Internal, 1 -> External */
                             5,  /* Direction Control pin for the driver, can be either GPIO or PCF Px pin */
@@ -15,9 +18,9 @@ void setup() {
   stepper1.enableDriver();
   Serial.println("Driver ENABLED");
   delay(1000);
-  stepper1.rotate(10, HIGH);  // Rotate 10 mm in one direction
+  stepper1.rotate(distance_travel, HIGH, StepDelay);  // Rotate 50 mm in one direction
   delay(5000);
-  stepper1.rotate(10, LOW);  // Rotate 10 mm in the other direction
+  stepper1.rotate(distance_travel, LOW, StepDelay);  // Rotate 50 mm in the other direction
   stepper1.disableDriver();
   delay(1000);
   Serial.println("Driver DISABLED");
@@ -32,9 +35,9 @@ void loop() {
   stepper1.enableDriver();
   Serial.println("Driver ENABLED");
   delay(1000);
-  stepper1.rotate(50, HIGH);  // Rotate 10 mm in one direction
+  stepper1.rotate(distance_travel, HIGH, StepDelay);  // Rotate 50 mm in one direction
   delay(5000);
-  stepper1.rotate(50, LOW);  // Rotate 10 mm in the other direction
+  stepper1.rotate(distance_travel, LOW, StepDelay);  // Rotate 50 mm in the other direction
   stepper1.disableDriver();
   delay(1000);
   Serial.println("Driver DISABLED");

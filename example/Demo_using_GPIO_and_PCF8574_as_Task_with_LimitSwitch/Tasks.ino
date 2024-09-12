@@ -5,13 +5,13 @@ void TaskToRunMotor1(void* parameter) {
 
     stepper1.enableDriver();
     Serial.println("Driver ENABLED 3");
-    stepper1.rotate(50, CCW);  // Rotate 50 mm in Counter-Clockwise direction
+    stepper1.rotate(distanceToTravel, CCW, StepDelay);  // Rotate 50 mm in Counter-Clockwise direction
     stepper1.disableDriver();
     Serial.println("Driver DISABLED 3");
     vTaskDelay(5000 / portTICK_PERIOD_MS);
     stepper1.enableDriver();
     Serial.println("Driver ENABLED 4");
-    stepper1.rotate(50, CW);  // Rotate 50 mm in Clockwise direction
+    stepper1.rotate(distanceToTravel, CW, StepDelay);  // Rotate 50 mm in Clockwise direction
     stepper1.disableDriver();
     Serial.println("Driver DISABLED 4");
     vTaskDelay(5000 / portTICK_PERIOD_MS);
@@ -28,6 +28,6 @@ void TaskToCheckLimitSw1(void* parameter) {
     // } else {
     //   vTaskResume(RunMotor1);
     }
-    vTaskDelay(100 / portTICK_PERIOD_MS);
+    vTaskDelay(50 / portTICK_PERIOD_MS);
   }
 }

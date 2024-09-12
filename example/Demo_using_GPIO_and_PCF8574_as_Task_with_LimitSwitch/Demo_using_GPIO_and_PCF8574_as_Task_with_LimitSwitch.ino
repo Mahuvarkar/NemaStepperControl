@@ -1,8 +1,3 @@
-/* 
-THIS CODE NEEDS TO BE TESTED ON HARDWARE
-TO BE TESTED AFTER "Demo_using_GPIO_and_PCF8574_as_Task.ino" 
-*/
-
 #include "main.h"
 
 NemaStepperControl stepper1(2,  /* Step(Pulse) pin for the driver, has to be strictly on the GPOI of uC */
@@ -28,7 +23,7 @@ void setup() {
     NULL,            /* Task input Parameter */
     1,               /* Priority of the task */
     &RunMotor1,      /* Task Handle */
-    0                /* Core where to run the task */
+    1                /* Core where to run the task */
   );
   // vTaskSuspend(RunMotor1);
 
@@ -39,7 +34,7 @@ void setup() {
     NULL,                /* Task input Parameter */
     1,                   /* Priority of the task */
     &CheckLimitSw1,      /* Task Handle */
-    1                    /* Core where to run the task */
+    0                    /* Core where to run the task */
   );
 }
 

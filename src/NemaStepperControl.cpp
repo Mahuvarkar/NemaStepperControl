@@ -3,14 +3,27 @@
 
 #include <pcf8574.h>
 
+/*
+addresses available for PCF are between 0x20 and 0x27
+A0 A1 A2 -> Address
+0  0  0  -> 0x20
+0  0  1  -> 0x21
+0  1  0  -> 0x22
+0  1  1  -> 0x23
+1  0  0  -> 0x24
+1  0  1  -> 0x25
+1  1  0  -> 0x26
+1  1  1  -> 0x27
+*/
+
 PCF8574 ex0(0x20);
-PCF8574 ex1(0x21);
-PCF8574 ex2(0x22);
-PCF8574 ex3(0x23);
-PCF8574 ex4(0x24);
-PCF8574 ex5(0x25);
-PCF8574 ex6(0x26);
-PCF8574 ex7(0x27);
+// PCF8574 ex1(0x21);
+// PCF8574 ex2(0x22);
+// PCF8574 ex3(0x23);
+// PCF8574 ex4(0x24);
+// PCF8574 ex5(0x25);
+// PCF8574 ex6(0x26);
+// PCF8574 ex7(0x27);
 
 enum StepAngleSelection {
 	StepAngle0, // 1.8deg
@@ -51,8 +64,10 @@ NemaStepperControl::NemaStepperControl(int stepPin, bool DirControlType, int dir
 	}
 	if (_EnControlType == InternalControl) {
 		pinMode(_enablePin, OUTPUT);
+		digitalWrite(_enablePin, HIGH);
 	} else if (_EnControlType == ExternalControl) {
 		pinMode(ex0, _enablePin, OUTPUT);
+		digitalWrite(ex0, _enablePin, HIGH);
 	}
   
 	_steps_per_revolutions = (_micro_steps * 203); 	// refine 203 as per required for fine tuning
@@ -61,9 +76,10 @@ NemaStepperControl::NemaStepperControl(int stepPin, bool DirControlType, int dir
 	_steps_for_1mm = (_steps_per_revolutions / _leads);
 }
 
-void NemaStepperControl::rotate(int distance, bool direction) {
+void NemaStepperControl::rotate(int distance, bool direction, int MicroSecDelay) {
 	_required_travel = distance;
 	_direction = direction;
+	_MicroSecDelay = MicroSecDelay;
 
 	if (_DirControlType == InternalControl) {
 		digitalWrite(_dirPin, _direction);
@@ -73,14 +89,14 @@ void NemaStepperControl::rotate(int distance, bool direction) {
 	for (int k = 0; k < _required_travel; k++) {
 		for (int i = 0; i < _steps_for_1mm; i++) {
 			digitalWrite(_stepPin, HIGH);
-			delayMicroseconds(50);  // Adjust this delay to control speed
+			delayMicroseconds(_MicroSecDelay);  // Adjust this delay to control speed
 			digitalWrite(_stepPin, LOW);
-			delayMicroseconds(50);  // Adjust this delay to control speed
+			delayMicroseconds(_MicroSecDelay);  // Adjust this delay to control speed
 		}
 	}
 }
 
-void NemaStepperControl::rotate(int stepAngle, int revolutions, bool direction) {
+/*void NemaStepperControl::rotate(int stepAngle, int revolutions, bool direction) {
 	int steps = 0;
 	digitalWrite(_dirPin, direction);
 	_revolutions = revolutions;
@@ -113,7 +129,7 @@ void NemaStepperControl::rotate(int stepAngle, int revolutions, bool direction) 
 		digitalWrite(_stepPin, LOW);
 		delayMicroseconds(50);  // Adjust this delay to control speed
 	}
-}
+}*/
 
 void NemaStepperControl::enableDriver() {
 	if (_EnControlType == InternalControl) {

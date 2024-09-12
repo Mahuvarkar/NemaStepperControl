@@ -1,8 +1,3 @@
-/*
-THIS CODE NEEDS TO BE TESTED ON HARDWARE
-FIRST TEST THIS CODE THEN GO FOR "Demo_using_GPIO_and_PCF8574_as_Task_with_LimitSwitch.ino" 
-*/
-
 #include "main.h"
 
 void TaskToRunMotor1(void* parameter) {
@@ -12,14 +7,14 @@ void TaskToRunMotor1(void* parameter) {
 
     stepper1.enableDriver();
     Serial.println("Driver ENABLED 3");
-    stepper1.rotate(50, CCW);  // Rotate 50 mm in Counter-Clockwise direction
+    stepper1.rotate(distanceToTravel, CCW, StepDelay);  // Rotate 50 mm in Counter-Clockwise direction
     vTaskDelay(1000 / portTICK_PERIOD_MS);
     stepper1.disableDriver();
     Serial.println("Driver DISABLED 3");
     vTaskDelay(5000 / portTICK_PERIOD_MS);
     stepper1.enableDriver();
     Serial.println("Driver ENABLED 4");
-    stepper1.rotate(50, CW);  // Rotate 50 mm in Clockwise direction
+    stepper1.rotate(distanceToTravel, CW, StepDelay);  // Rotate 50 mm in Clockwise direction
     vTaskDelay(1000 / portTICK_PERIOD_MS);
     stepper1.disableDriver();
     Serial.println("Driver DISABLED 4");
