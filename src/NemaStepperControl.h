@@ -6,19 +6,26 @@
 
 class NemaStepperControl {
   public:
-    NemaStepperControl(int stepPin, bool DirControlType, int dirPin, bool EnControlType, int enablePin, int microSteps, int ScrewPitch, int ScrewStart); 
-    void rotate(int distance, bool direction, int MicroSecDelay);
+    NemaStepperControl(int stepPin1, bool DirControlType1, int dirPin1, bool EnControlType1, int enablePin1, int microSteps, int ScrewPitch, int ScrewStart); 
+	NemaStepperControl(int stepPin1, bool DirControlType1, int dirPin1, bool EnControlType1, int enablePin1, 
+					   int stepPin2, bool DirControlType2, int dirPin2, bool EnControlType2, int enablePin2, 
+					   int microSteps, int ScrewPitch, int ScrewStart);
+    void rotate(int distance, bool direction1, int MicroSecDelay);
+	void rotateSimultaneous(int distance, bool direction1, bool direction2, int MicroSecDelay);
 	//void rotate(int stepAngle, int revolutions, bool direction);
     void enableDriver();
+	void enableDriverSimultaneous();
     void disableDriver();
+	void disableDriverSimultaneous();
+	
   private:
-	bool _DirControlType;
-	bool _EnControlType;
-	bool _direction;
+	bool _DirControlType1, _DirControlType2,
+		 _EnControlType1, _EnControlType2,
+		 _direction1, _direction2;
 	int _StepAngleSelected;
-    int _stepPin;
-    int _dirPin;
-    int _enablePin;
+    int _stepPin1, _stepPin2, 
+		_dirPin1, _dirPin2, 
+		_enablePin1, _enablePin2;
 	int _revolutions;
 	int _micro_steps;  	// Microsteps as per motor configuration... 
 						// 16 for 42HHD4027-01 

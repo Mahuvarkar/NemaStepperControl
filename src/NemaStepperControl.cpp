@@ -45,29 +45,29 @@ enum ScrewTypeSelection {
 	BALLSCREW_8MM
 };
 
-NemaStepperControl::NemaStepperControl(int stepPin, bool DirControlType, int dirPin, bool EnControlType, int enablePin, int microSteps, int ScrewPitch, int ScrewStart) {
-	_DirControlType = DirControlType;
-	_EnControlType = EnControlType;
-	_stepPin = stepPin;
-	_dirPin = dirPin;
-	_enablePin = enablePin;
+NemaStepperControl::NemaStepperControl(int stepPin1, bool DirControlType1, int dirPin1, bool EnControlType1, int enablePin1, int microSteps, int ScrewPitch, int ScrewStart) {
+	_DirControlType1 = DirControlType1;
+	_EnControlType1 = EnControlType1;
+	_stepPin1 = stepPin1;
+	_dirPin1 = dirPin1;
+	_enablePin1 = enablePin1;
 	_micro_steps = microSteps; 
 	_ScrewPitch = ScrewPitch;
 	_ScrewStart = ScrewStart;
 	_leads = (_ScrewPitch * _ScrewStart);
   
-	pinMode(_stepPin, OUTPUT);
-	if (_DirControlType == InternalControl) {
-		pinMode(_dirPin, OUTPUT);
-	} else if (_DirControlType == ExternalControl) {
-		pinMode(ex0, _dirPin, OUTPUT);
+	pinMode(_stepPin1, OUTPUT);
+	if (_DirControlType1 == InternalControl) {
+		pinMode(_dirPin1, OUTPUT);
+	} else if (_DirControlType1 == ExternalControl) {
+		pinMode(ex0, _dirPin1, OUTPUT);
 	}
-	if (_EnControlType == InternalControl) {
-		pinMode(_enablePin, OUTPUT);
-		digitalWrite(_enablePin, HIGH);
-	} else if (_EnControlType == ExternalControl) {
-		pinMode(ex0, _enablePin, OUTPUT);
-		digitalWrite(ex0, _enablePin, HIGH);
+	if (_EnControlType1 == InternalControl) {
+		pinMode(_enablePin1, OUTPUT);
+		digitalWrite(_enablePin1, HIGH);
+	} else if (_EnControlType1 == ExternalControl) {
+		pinMode(ex0, _enablePin1, OUTPUT);
+		digitalWrite(ex0, _enablePin1, HIGH);
 	}
   
 	_steps_per_revolutions = (_micro_steps * 203); 	// refine 203 as per required for fine tuning
@@ -76,21 +76,105 @@ NemaStepperControl::NemaStepperControl(int stepPin, bool DirControlType, int dir
 	_steps_for_1mm = (_steps_per_revolutions / _leads);
 }
 
-void NemaStepperControl::rotate(int distance, bool direction, int MicroSecDelay) {
+NemaStepperControl::NemaStepperControl(int stepPin1, bool DirControlType1, int dirPin1, bool EnControlType1, int enablePin1, 
+											int stepPin2, bool DirControlType2, int dirPin2, bool EnControlType2, int enablePin2, 
+											int microSteps, int ScrewPitch, int ScrewStart) {
+
+	_DirControlType1 = DirControlType1;
+	_DirControlType2 = DirControlType2;
+	_EnControlType1 = EnControlType1;
+	_EnControlType2 = EnControlType2;
+	
+	_stepPin1 = stepPin1;
+	_stepPin2 = stepPin2;
+	_dirPin1 = dirPin1;
+	_dirPin2 = dirPin2;
+	_enablePin1 = enablePin1;
+	_enablePin2 = enablePin2;
+	_micro_steps = microSteps; 
+	_ScrewPitch = ScrewPitch;
+	_ScrewStart = ScrewStart;
+	_leads = (_ScrewPitch * _ScrewStart);
+  
+	pinMode(_stepPin1, OUTPUT);
+	pinMode(_stepPin2, OUTPUT);
+	
+	if (_DirControlType1 == InternalControl) {
+		pinMode(_dirPin1, OUTPUT);
+	} else if (_DirControlType1 == ExternalControl) {
+		pinMode(ex0, _dirPin1, OUTPUT);
+	}
+	if (_DirControlType2 == InternalControl) {
+		pinMode(_dirPin2, OUTPUT);
+	} else if (_DirControlType2 == ExternalControl) {
+		pinMode(ex0, _dirPin2, OUTPUT);
+	}
+	
+	if (_EnControlType1 == InternalControl) {
+		pinMode(_enablePin1, OUTPUT);
+		digitalWrite(_enablePin1, HIGH);
+	} else if (_EnControlType1 == ExternalControl) {
+		pinMode(ex0, _enablePin1, OUTPUT);
+		digitalWrite(ex0, _enablePin1, HIGH);
+	}
+	if (_EnControlType2 == InternalControl) {
+		pinMode(_enablePin2, OUTPUT);
+		digitalWrite(_enablePin2, HIGH);
+	} else if (_EnControlType2 == ExternalControl) {
+		pinMode(ex0, _enablePin2, OUTPUT);
+		digitalWrite(ex0, _enablePin2, HIGH);
+	}
+  
+	_steps_per_revolutions = (_micro_steps * 203); 	// refine 203 as per required for fine tuning
+													// 203 for 42HHD4027-01
+													// 200 for Robokit-RKI-1127
+	_steps_for_1mm = (_steps_per_revolutions / _leads);
+	
+}
+
+void NemaStepperControl::rotate(int distance, bool direction1, int MicroSecDelay) {
 	_required_travel = distance;
-	_direction = direction;
+	_direction1 = direction1;
 	_MicroSecDelay = MicroSecDelay;
 
-	if (_DirControlType == InternalControl) {
-		digitalWrite(_dirPin, _direction);
-	} else if (_DirControlType == ExternalControl) {
-		digitalWrite(ex0, _dirPin, _direction);
+	if (_DirControlType1 == InternalControl) {
+		digitalWrite(_dirPin1, _direction1);
+	} else if (_DirControlType1 == ExternalControl) {
+		digitalWrite(ex0, _dirPin1, _direction1);
 	}
 	for (int k = 0; k < _required_travel; k++) {
 		for (int i = 0; i < _steps_for_1mm; i++) {
-			digitalWrite(_stepPin, HIGH);
+			digitalWrite(_stepPin1, HIGH);
 			delayMicroseconds(_MicroSecDelay);  // Adjust this delay to control speed
-			digitalWrite(_stepPin, LOW);
+			digitalWrite(_stepPin1, LOW);
+			delayMicroseconds(_MicroSecDelay);  // Adjust this delay to control speed
+		}
+	}
+}
+
+void NemaStepperControl::rotateSimultaneous(int distance, bool direction1, bool direction2, int MicroSecDelay) {
+	_required_travel = distance;
+	_direction1 = direction1;
+	_direction2 = direction2;
+	_MicroSecDelay = MicroSecDelay;
+
+	if (_DirControlType1 == InternalControl) {
+		digitalWrite(_dirPin1, _direction1);
+	} else if (_DirControlType1 == ExternalControl) {
+		digitalWrite(ex0, _dirPin1, _direction1);
+	}
+	if (_DirControlType2 == InternalControl) {
+		digitalWrite(_dirPin2, _direction2);
+	} else if (_DirControlType2 == ExternalControl) {
+		digitalWrite(ex0, _dirPin2, _direction2);
+	}
+	for (int k = 0; k < _required_travel; k++) {
+		for (int i = 0; i < _steps_for_1mm; i++) {
+			digitalWrite(_stepPin1, HIGH);
+			digitalWrite(_stepPin2, HIGH);
+			delayMicroseconds(_MicroSecDelay);  // Adjust this delay to control speed
+			digitalWrite(_stepPin1, LOW);
+			digitalWrite(_stepPin2, LOW);
 			delayMicroseconds(_MicroSecDelay);  // Adjust this delay to control speed
 		}
 	}
@@ -132,17 +216,43 @@ void NemaStepperControl::rotate(int distance, bool direction, int MicroSecDelay)
 }*/
 
 void NemaStepperControl::enableDriver() {
-	if (_EnControlType == InternalControl) {
-		digitalWrite(_enablePin, LOW);  // Assuming LOW enables the driver
-	} else if (_EnControlType == ExternalControl) {
-		digitalWrite(ex0, _enablePin, LOW);  // Assuming LOW enables the driver
+	if (_EnControlType1 == InternalControl) {
+		digitalWrite(_enablePin1, LOW);  // Assuming LOW enables the driver
+	} else if (_EnControlType1 == ExternalControl) {
+		digitalWrite(ex0, _enablePin1, LOW);  // Assuming LOW enables the driver
+	}
+}
+
+void NemaStepperControl::enableDriverSimultaneous() {
+	if (_EnControlType1 == InternalControl) {
+		digitalWrite(_enablePin1, LOW);  // Assuming LOW enables the driver
+	} else if (_EnControlType1 == ExternalControl) {
+		digitalWrite(ex0, _enablePin1, LOW);  // Assuming LOW enables the driver
+	}
+	if (_EnControlType2 == InternalControl) {
+		digitalWrite(_enablePin2, LOW);  // Assuming LOW enables the driver
+	} else if (_EnControlType2 == ExternalControl) {
+		digitalWrite(ex0, _enablePin2, LOW);  // Assuming LOW enables the driver
 	}
 }
 
 void NemaStepperControl::disableDriver() {
-	if (_EnControlType == InternalControl) {
-		digitalWrite(_enablePin, HIGH);  // Assuming HIGH disables the driver
-	} else if (_EnControlType == ExternalControl) {
-		digitalWrite(ex0, _enablePin, HIGH);  // Assuming HIGH disables the driver
+	if (_EnControlType1 == InternalControl) {
+		digitalWrite(_enablePin1, HIGH);  // Assuming HIGH disables the driver
+	} else if (_EnControlType1 == ExternalControl) {
+		digitalWrite(ex0, _enablePin1, HIGH);  // Assuming HIGH disables the driver
+	}
+}
+
+void NemaStepperControl::disableDriverSimultaneous() {
+	if (_EnControlType1 == InternalControl) {
+		digitalWrite(_enablePin1, HIGH);  // Assuming HIGH disables the driver
+	} else if (_EnControlType1 == ExternalControl) {
+		digitalWrite(ex0, _enablePin1, HIGH);  // Assuming HIGH disables the driver
+	}
+	if (_EnControlType2 == InternalControl) {
+		digitalWrite(_enablePin2, HIGH);  // Assuming HIGH disables the driver
+	} else if (_EnControlType2 == ExternalControl) {
+		digitalWrite(ex0, _enablePin2, HIGH);  // Assuming HIGH disables the driver
 	}
 }
